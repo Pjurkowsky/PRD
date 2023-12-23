@@ -1,0 +1,10 @@
+-- SQLBook: Code
+ALTER TABLE Application ADD CONSTRAINT FKApplicatio410864 FOREIGN KEY (application_type_id) REFERENCES `Application Type` (id);
+ALTER TABLE Applicant ADD CONSTRAINT FKApplicant692669 FOREIGN KEY (person_id) REFERENCES Person (id);
+ALTER TABLE Application ADD CONSTRAINT FKApplicatio896957 FOREIGN KEY (applicant_id) REFERENCES Applicant (id);
+ALTER TABLE Employee ADD CONSTRAINT FKEmployee631292 FOREIGN KEY (user_id) REFERENCES `User` (id);
+ALTER TABLE Application ADD CONSTRAINT FKApplicatio361712 FOREIGN KEY (employee_id) REFERENCES Employee (id);
+ALTER TABLE Person ADD CONSTRAINT FKPerson829511 FOREIGN KEY (address_id) REFERENCES Address (id);
+ALTER TABLE Resident ADD CONSTRAINT FKResident964261 FOREIGN KEY (user_id) REFERENCES `User` (id);
+ALTER TABLE Resident ADD CONSTRAINT FKResident140468 FOREIGN KEY (person_id) REFERENCES Person (id);
+ALTER TABLE `User` ADD CONSTRAINT FKUser595632 FOREIGN KEY (applicant_id) REFERENCES Applicant (id);

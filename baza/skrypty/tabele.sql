@@ -1,0 +1,9 @@
+-- SQLBook: Code
+CREATE TABLE `User` (id int(10) NOT NULL AUTO_INCREMENT, username varchar(255) NOT NULL UNIQUE, password varchar(255) NOT NULL, applicant_id int(10), CONSTRAINT id PRIMARY KEY (id));
+CREATE TABLE Employee (id int(10) NOT NULL AUTO_INCREMENT, user_id int(10) NOT NULL UNIQUE, CONSTRAINT id PRIMARY KEY (id));
+CREATE TABLE Application (id int(10) NOT NULL AUTO_INCREMENT, status  varchar(255) DEFAULT "in review" NOT NULL, date_of_submission DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, date_of_verification DATETIME ON UPDATE CURRENT_TIMESTAMP, note varchar(1000), application_type_id int(10) NOT NULL, applicant_id int(10) NOT NULL, employee_id int(10) NOT NULL, CONSTRAINT id PRIMARY KEY (id));
+CREATE TABLE Person (id int(10) NOT NULL AUTO_INCREMENT, first_name varchar(255) NOT NULL, second_name varchar(255), last_name varchar(255) NOT NULL, gender char(1) NOT NULL, PESEL char(11) UNIQUE, date_of_birth date, place_of_birth varchar(255), birth_certificate varchar(255) UNIQUE, death_certificate varchar(255) UNIQUE, civil_status_certificate varchar(255) UNIQUE, father_name varchar(255), mother_name varchar(255), mother_maiden_name varchar(255), address_id int(10) NOT NULL, CONSTRAINT id PRIMARY KEY (id));
+CREATE TABLE `Application Type` (id int(10) NOT NULL AUTO_INCREMENT, type int(10) NOT NULL, type_name varchar(255) NOT NULL, CONSTRAINT id PRIMARY KEY (id));
+CREATE TABLE Applicant (id int(10) NOT NULL AUTO_INCREMENT, email_address varchar(255) NOT NULL, phone_number int(9) NOT NULL, person_id int(10) NOT NULL UNIQUE, CONSTRAINT id PRIMARY KEY (id));
+CREATE TABLE Resident (id int(10) NOT NULL AUTO_INCREMENT, person_id int(10) NOT NULL UNIQUE, user_id int(10) NOT NULL UNIQUE, CONSTRAINT id PRIMARY KEY (id));
+CREATE TABLE Address (id int(10) NOT NULL AUTO_INCREMENT, street varchar(255) NOT NULL, apartment_number varchar(20) NOT NULL, city varchar(255) NOT NULL, postal_code char(6) NOT NULL, CONSTRAINT id PRIMARY KEY (id));
