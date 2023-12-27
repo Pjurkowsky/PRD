@@ -1,4 +1,5 @@
 
+import time
 from fastapi import FastAPI, APIRouter, Depends, HTTPException, status
 
 from database import connect
@@ -6,11 +7,21 @@ from database import connect
 from auth import sign_jwt, JWTBearer
 from model import UserLoginSchema
 
+
 app = FastAPI()
 
 router = APIRouter(prefix="/api")
 
-conn = connect()
+while True:  # temporary for tests
+    try:
+        conn = connect()
+        time.sleep(1)
+        if conn.is_connected():
+            print("Connected to MySQL database")
+            break
+    except Exception as e:
+        print(e)
+
 cursor = conn.cursor(dictionary=True)
 
 
