@@ -69,7 +69,7 @@ INSERT INTO Application (application_type_id, applicant_id, employee_id) VALUES
 
 
 INSERT INTO Person (first_name, second_name, last_name, gender, PESEL, date_of_birth, place_of_birth, birth_certificate, death_certificate, civil_status_certificate, father_name, mother_name, mother_maiden_name, address_id) VALUES
-( 'cwel', NULL, 'Brown', 'F', '31416232219', '1985-12-28', 'New York', NULL, NULL, NULL, 'Peter', 'Sophie', 'Miller', 1);
+( 'woloo', NULL, 'Brown', 'F', '31416232219', '1985-12-28', 'New York', NULL, NULL, NULL, 'Peter', 'Sophie', 'Miller', 1);
 
 INSERT INTO Applicant (email_address, phone_number, person_id, user_id) VALUES
 ('eveDd@example.com', 987654321, 32, NULL);
