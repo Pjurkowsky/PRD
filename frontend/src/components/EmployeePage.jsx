@@ -1,27 +1,9 @@
 import { useEffect, useState } from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
+import { DataGrid } from "@mui/x-data-grid";
+import Box from "@mui/material/Box";
 
-function createData(
-  status,
-  date_of_submission,
-  note,
-  date_of_verification,
-  application_type
-) {
-  return {
-    status,
-    date_of_submission,
-    note,
-    date_of_verification,
-    application_type,
-  };
-}
+import { Button } from "@mui/material";
+import { Link } from "react-router-dom";
 
 function EmployeePage() {
   const [applications, setApplications] = useState([]);
@@ -46,35 +28,114 @@ function EmployeePage() {
     }
   }, []);
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell align="right">Status</TableCell>
-            <TableCell align="right">Data złożenia</TableCell>
-            <TableCell align="right">Notatka</TableCell>
-            <TableCell align="right">Data weryfikacji</TableCell>
-            <TableCell align="right">Rodzaj wniosku</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {applications.map((row) => (
-            <TableRow
-              key={row.name}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-              <TableCell align="right">{row.status}</TableCell>
-              <TableCell align="right">{row.date_of_submission}</TableCell>
-              <TableCell align="right">{row.note}</TableCell>
-              <TableCell align="right">{row.date_of_verification}</TableCell>
-              <TableCell align="right">
-                {row.application_type.type_name}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <div className="w-8/12 m-auto mt-10">
+      <div className="font-bold text-2xl text-center">Panel Pracownika</div>
+      <div className="mt-10">
+        <Box sx={{ width: "100%" }}>
+          <DataGrid
+            rows={applications}
+            columns={[
+              { field: "id", headerName: "ID", width: 70 },
+              {
+                field: "status",
+                headerName: "Status",
+                width: 130,
+                renderCell: (params) => {
+                  return (
+                    <div className="flex justify-center">
+                      <div
+                        className={`${
+                          params.value === "approved"
+                            ? "bg-green-500"
+                            : (params.value === "rejected" && "bg-red-500") ||
+                              "bg-blue-500"
+                        } text-white rounded-full px-3 py-1 text-sm font-semibold`}
+                      >
+                        {params.value}
+                      </div>
+                    </div>
+                  );
+                },
+              },
+              {
+                field: "date_of_submission",
+                headerName: "Data złożenia",
+                width: 200,
+              },
+              {
+                field: "date_of_verification",
+                headerName: "Data weryfikacji",
+                width: 200,
+              },
+
+              {
+                field: "application_type",
+                headerName: "Rodzaj wniosku",
+                width: 200,
+                valueGetter: (params) => `${params.value.type_name || ""}`,
+              },
+
+              {
+                headerName: "",
+                width: 200,
+                sortable: false,
+                renderCell: (params) => {
+                  return (
+                    <div className="flex justify-center">
+                      <Button variant="contained" color="primary">
+                        <Link to={`/application/${params.value}`}>
+                          {params.row.status === "approved"
+                            ? "Przeglądaj"
+                            : "Weryfikuj"}
+                        </Link>
+                      </Button>
+                    </div>
+                  );
+                },
+              },
+            ]}
+            pageSize={10}
+            rowsPerPageOptions={[10]}
+            disableSelectionOnClick
+          />
+        </Box>
+      </div>
+    </div>
+    // <TableContainer component={Paper}>
+    //   <Table sx={{ minWidth: 650 }} aria-label="simple table">
+    //     <TableHead>
+    //       <TableRow>
+    //         <TableCell align="right">Status</TableCell>
+    //         <TableCell align="right">Data złożenia</TableCell>
+    //         <TableCell align="right">Notatka</TableCell>
+    //         <TableCell align="right">Data weryfikacji</TableCell>
+    //         <TableCell align="right">Rodzaj wniosku</TableCell>
+    //         <TableCell></TableCell>
+    //       </TableRow>
+    //     </TableHead>
+    //     <TableBody>
+    //       {applications.map((row) => (
+    //         <TableRow
+    //           key={row.name}
+    //           sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+    //         >
+    //           <TableCell align="right">{row.status}</TableCell>
+    //           <TableCell align="right">{row.date_of_submission}</TableCell>
+    //           <TableCell align="right">{row.note}</TableCell>
+    //           <TableCell align="right">{row.date_of_verification}</TableCell>
+    //           <TableCell align="right">
+    //             {row.application_type.type_name}
+    //           </TableCell>
+    //           <TableCell align="right">
+    //             <Button variant="contained" color="primary">
+    //               <Link to={`/application/${row.id}`}>Weryfikuj</Link>
+    //             </Button>
+    //           </TableCell>
+    //         </TableRow>
+    //       ))}
+    //     </TableBody>
+    //   </Table>
+    // </TableContainer>
   );
 }
 

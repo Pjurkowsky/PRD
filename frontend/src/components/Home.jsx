@@ -1,7 +1,18 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
+import { useEffect } from "react";
 
-function Home() {
+function Home({ isEmployee, loggedIn }) {
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (loggedIn) {
+      if (isEmployee) {
+        navigate("/employee_dashboard");
+      } else {
+        navigate("/user_dashboard");
+      }
+    }
+  }, [isEmployee, navigate]);
   return (
     <>
       <div className="flex h-screen justify-center items-center">
@@ -13,7 +24,12 @@ function Home() {
             Zajmie to ci tylko minutę!
           </div>
           <div className="flex justify-center">
-            <Button variant="contained" color="success" size="large">
+            <Button
+              variant="contained"
+              color="success"
+              size="large"
+              className=""
+            >
               <Link to={"/application"}>Złóż Wniosek</Link>
             </Button>
           </div>

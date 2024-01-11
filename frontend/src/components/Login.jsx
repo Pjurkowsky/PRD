@@ -5,21 +5,13 @@ import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
-function Login({ setLoggedIn }) {
+function Login({ setLoggedIn, setIsEmployee }) {
   const [username, setUserName] = useState();
   const [password, setPassword] = useState();
-  const [token, setTok] = useState();
   const navigate = useNavigate();
 
   function setToken(userToken) {
     sessionStorage.setItem("token", JSON.stringify(userToken));
-    setTok(userToken);
-  }
-
-  function getToken() {
-    const tokenString = sessionStorage.getItem("token");
-    const userToken = JSON.parse(tokenString);
-    return userToken?.token;
   }
 
   async function loginUser(credentials) {
@@ -72,7 +64,6 @@ function Login({ setLoggedIn }) {
       const errorData = data;
       throw new Error(errorData.message);
     }
-    console.log(data);
     return data;
   }
   const handleSubmit = async (e) => {
@@ -81,12 +72,17 @@ function Login({ setLoggedIn }) {
       username,
       password,
     });
-    await setToken(token);
+    setToken(token);
     await getUser(token.access_token);
 
-    (await checkIfEmployee(token.access_token))
-      ? navigate("/employee")
-      : navigate("/userDashboard");
+    const isEmployee = await checkIfEmployee(token.access_token);
+    if (isEmployee) {
+      setIsEmployee(true);
+      navigate("/employee");
+    } else {
+      setIsEmployee(false);
+      navigate("/dashboard");
+    }
   };
 
   return (
