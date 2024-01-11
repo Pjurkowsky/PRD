@@ -7,6 +7,7 @@ import Login from "./components/Login";
 import PrivateRoutes from "./components/PrivateRoutes";
 import EmployeePage from "./components/EmployeePage";
 import UserDashboard from "./components/UserDashboard";
+import ApplicationForm from "./components/UserDashboard";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -50,7 +51,7 @@ function App() {
           <Route path="/employee" element={<EmployeePage />} />
         </Route>
         <Route path="/" element={<Home />} />
-
+        <Route path="/application" element={<ApplicationForm />} />
         <Route path="/login" element={<Login setLoggedIn={setLoggedIn} />} />
         <Route path="*" element={<NotFound />} />
         <Route path="dashboard/" element={<UserDashboard />} />

@@ -6,7 +6,9 @@ function Home() {
     <>
       <div className="flex h-screen justify-center items-center">
         <div className="flex flex-col">
-          <div className="font-bold text-2xl">
+          <div className="font-bold text-5xl mb-10">
+            Dział Ewidencji Ludności </div>
+          <div className="font-bold text-2xl text-center">
             Wpisz się do rejestru mieszkańców już DZIŚ!
           </div>
           <div className="mt-24 text-center mb-10">
