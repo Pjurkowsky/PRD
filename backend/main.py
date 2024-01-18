@@ -40,7 +40,6 @@ cursor = conn.cursor(dictionary=True)
 
 def get_current_user(current_user: str = Depends(JWTBearer())):
     payload = decode_jwt(current_user)
-    print(current_user)
     return payload
 
 
@@ -52,37 +51,78 @@ def get_applications():
     return result
 
 
+@router.get("/application/{id}", dependencies=[Depends(JWTBearer())])
+def get_application(id: int):
+    query = "SELECT * FROM FullApplicationInfo WHERE application_id=%s"
+    cursor.execute(query, (id,))
+    result = cursor.fetchone()
+
+    if result is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail="Invalid data")
+
+    return result
+
+
 @router.get("/employee_applications", dependencies=[Depends(JWTBearer())])
 def get_employee_applications(current_user: str = Depends(get_current_user)):
-    query = "SELECT * FROM User WHERE username=%s"
+    # Use JOIN operations to simplify the queries
+    query = """
+    SELECT A.*
+    FROM Application A
+    JOIN Employee E ON A.employee_id = E.id
+    JOIN User U ON E.user_id = U.id
+    WHERE U.username=%s
+    """
     cursor.execute(query, (current_user,))
-    user = cursor.fetchone()
-
-    if user is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail="Invalid data")
-
-    query = "SELECT * FROM Employee WHERE user_id=%s"
-    cursor.execute(query, (user["id"],))
-    employee = cursor.fetchone()
-
-    if employee is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail="Invalid data")
-
-    query = "SELECT * FROM Application WHERE employee_id=%s"
-    cursor.execute(query, (employee["id"],))
     result = cursor.fetchall()
 
+    if not result:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid data")
+
+    # Fetch application types separately
     query = "SELECT * FROM `Application Type`"
     cursor.execute(query)
-    application_types = cursor.fetchall()
+    application_types = {
+        app_type["id"]: app_type for app_type in cursor.fetchall()}
 
+    # Add application_type to each application in the result
     for application in result:
-        for application_type in application_types:
-            if application["application_type_id"] == application_type["id"]:
-                application["application_type"] = application_type
-                break
+        application_type_id = application["application_type_id"]
+        if application_type_id in application_types:
+            application["application_type"] = application_types[application_type_id]
+
+    return result
+
+
+@router.get("/user_applications", dependencies=[Depends(JWTBearer())])
+def get_user_applications(current_user: str = Depends(get_current_user)):
+    query = """
+    SELECT A.*
+    FROM Application A
+    JOIN Applicant AP ON A.applicant_id = AP.id
+    JOIN Person P ON AP.person_id = P.id
+    WHERE P.pesel=%s
+    """
+    cursor.execute(query, (current_user,))
+    result = cursor.fetchall()
+
+    if not result:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid data")
+
+    # Fetch application types separately
+    query = "SELECT * FROM `Application Type`"
+    cursor.execute(query)
+    application_types = {
+        app_type["id"]: app_type for app_type in cursor.fetchall()}
+
+    # Add application_type to each application in the result
+    for application in result:
+        application_type_id = application["application_type_id"]
+        if application_type_id in application_types:
+            application["application_type"] = application_types[application_type_id]
 
     return result
 
@@ -97,17 +137,27 @@ def get_user(current_user: str = Depends(get_current_user)):
 
 @router.get("/is_employee", dependencies=[Depends(JWTBearer())])
 def get_is_employee(current_user: str = Depends(get_current_user)):
-    query = "SELECT * FROM User WHERE username=%s"
+    query = """
+        SELECT E.*
+        FROM User U
+        LEFT JOIN Employee E ON U.id = E.user_id
+        WHERE U.username = %s
+    """
     cursor.execute(query, (current_user,))
-    user = cursor.fetchone()
+    result = cursor.fetchone()
 
-    if user is None:
+    if result is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail="Invalid data")
 
-    query = "SELECT * FROM Employee WHERE user_id=%s"
-    cursor.execute(query, (user["id"],))
-    result = cursor.fetchone()
+    return result
+
+
+@router.get("/application_types")
+def get_application_types():
+    query = "SELECT * FROM `Application Type`"
+    cursor.execute(query)
+    result = cursor.fetchall()
     return result
 
 
@@ -167,74 +217,88 @@ def post_applicant(applicant: ApplicantSchema):
 
 @router.post("/full_application")
 def post_full_application(full_application: FullApplicationSchema):
-    query = "INSERT INTO Address (street, apartment_number, city, postal_code) VALUES (%s, %s, %s, %s)"
-    cursor.execute(query, (full_application.street, full_application.apartment_number,
-                   full_application.city, full_application.postal_code))
-    conn.commit()
+    try:
 
-    address_id = cursor.lastrowid
+        query = "INSERT INTO Address (street, apartment_number, city, postal_code) VALUES (%s, %s, %s, %s)"
+        cursor.execute(query, (full_application.street, full_application.apartment_number,
+                               full_application.city, full_application.postal_code))
+        conn.commit()
 
-    cursor.execute("SELECT * FROM Address WHERE id = %s", (address_id,))
-    address = cursor.fetchone()
+        address_id = cursor.lastrowid
 
-    if address is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+        cursor.execute("SELECT * FROM Address WHERE id = %s", (address_id,))
+        address = cursor.fetchone()
+
+        if address is None:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                                detail="Invalid data")
+
+        query = "INSERT INTO Person (first_name, second_name, last_name, gender, pesel, date_of_birth, place_of_birth, birth_certificate, death_certificate, civil_status_certificate, father_name, mother_name, mother_maiden_name, address_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s, %s, %s, %s)"
+        cursor.execute(query, (full_application.first_name, full_application.second_name, full_application.last_name, full_application.gender, full_application.pesel, full_application.date_of_birth, full_application.place_of_birth,
+                               full_application.birth_certificate, full_application.death_certificate, full_application.civil_status_certificate, full_application.father_name, full_application.mother_name, full_application.mother_maiden_name, address_id))
+        conn.commit()
+
+        person_id = cursor.lastrowid
+
+        cursor.execute("SELECT * FROM Person WHERE id = %s", (person_id,))
+
+        person = cursor.fetchone()
+
+        if person is None:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                                detail="Invalid data")
+
+        query = "INSERT INTO Applicant (email_address,phone_number,person_id) VALUES (%s, %s, %s)"
+        cursor.execute(query, (full_application.email_address,
+                               full_application.phone_number, person_id))
+        conn.commit()
+
+        applicant_id = cursor.lastrowid
+
+        cursor.execute("SELECT * FROM Applicant WHERE id = %s",
+                       (applicant_id,))
+
+        applicant = cursor.fetchone()
+
+        if applicant is None:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                                detail="Invalid data")
+
+        query = "INSERT INTO Application (application_type_id, applicant_id) VALUES (%s, %s)"
+
+        cursor.execute(
+            query, (full_application.application_type_id, applicant_id))
+
+        conn.commit()
+
+        application_id = cursor.lastrowid
+
+        cursor.execute("SELECT * FROM Application WHERE id = %s",
+                       (application_id,))
+
+        application = cursor.fetchone()
+
+        if application is None:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                                detail="Invalid data")
+
+        # get user
+        query = "SELECT * FROM User WHERE applicant_id=%s"
+        cursor.execute(query, (applicant_id,))
+        user = cursor.fetchone()
+
+        result = {
+            "address": address,
+            "person": person,
+            "applicant": applicant,
+            "application": application,
+            "user": user
+        }
+        return result
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED,
                             detail="Invalid data")
-
-    query = "INSERT INTO Person (first_name, second_name, last_name, gender, pesel, date_of_birth, place_of_birth, birth_certificate, death_certificate, civil_status_certificate, father_name, mother_name, mother_maiden_name, address_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s, %s, %s, %s)"
-    cursor.execute(query, (full_application.first_name, full_application.second_name, full_application.last_name, full_application.gender, full_application.pesel, full_application.date_of_birth, full_application.place_of_birth,
-                   full_application.birth_certificate, full_application.death_certificate, full_application.civil_status_certificate, full_application.father_name, full_application.mother_name, full_application.mother_maiden_name, address_id))
-    conn.commit()
-
-    person_id = cursor.lastrowid
-
-    cursor.execute("SELECT * FROM Person WHERE id = %s", (person_id,))
-
-    person = cursor.fetchone()
-
-    if person is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail="Invalid data")
-
-    query = "INSERT INTO Applicant (email_address,phone_number,person_id) VALUES (%s, %s, %s)"
-    cursor.execute(query, (full_application.email_address,
-                   full_application.phone_number, person_id))
-    conn.commit()
-
-    applicant_id = cursor.lastrowid
-
-    cursor.execute("SELECT * FROM Applicant WHERE id = %s", (applicant_id,))
-
-    applicant = cursor.fetchone()
-
-    if applicant is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail="Invalid data")
-
-    query = "INSERT INTO Application (application_type_id, applicant_id) VALUES (%s, %s)"
-
-    cursor.execute(query, (full_application.application_type_id, applicant_id))
-
-    conn.commit()
-
-    application_id = cursor.lastrowid
-
-    cursor.execute("SELECT * FROM Application WHERE id = %s",
-                   (application_id,))
-
-    application = cursor.fetchone()
-
-    if application is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail="Invalid data")
-
-    result = {
-        "address": address,
-        "person": person,
-        "applicant": applicant,
-        "application": application
-    }
-    return result
 
 
 @router.post("/application_verification", dependencies=[Depends(JWTBearer())])
@@ -301,8 +365,6 @@ def login(user: UserLoginSchema):
     query = "SELECT * FROM User WHERE username=%s AND password=%s"
     cursor.execute(query, (user.username, user.password))
     result = cursor.fetchone()
-    print(user.password)
-    print(result)
     if result is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail="Invalid username or password")

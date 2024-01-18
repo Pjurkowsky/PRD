@@ -83,7 +83,7 @@ function EmployeePage() {
                   return (
                     <div className="flex justify-center">
                       <Button variant="contained" color="primary">
-                        <Link to={`/application/${params.value}`}>
+                        <Link to={`/application/${params.row.id}`}>
                           {params.row.status === "approved"
                             ? "Przeglądaj"
                             : "Weryfikuj"}

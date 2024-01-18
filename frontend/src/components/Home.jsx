@@ -29,6 +29,7 @@ function Home({ isEmployee, loggedIn }) {
               color="success"
               size="large"
               className=""
+              sx={{ borderRadius: "20px", width: "200px", height: "50px" }}
             >
               <Link to={"/application"}>Złóż Wniosek</Link>
             </Button>

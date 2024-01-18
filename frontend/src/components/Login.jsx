@@ -76,12 +76,13 @@ function Login({ setLoggedIn, setIsEmployee }) {
     await getUser(token.access_token);
 
     const isEmployee = await checkIfEmployee(token.access_token);
-    if (isEmployee) {
+    console.log(isEmployee);
+    if (isEmployee.id != null) {
       setIsEmployee(true);
       navigate("/employee");
     } else {
       setIsEmployee(false);
-      navigate("/dashboard");
+      navigate("/user_dashboard");
     }
   };
 
@@ -97,7 +98,7 @@ function Login({ setLoggedIn, setIsEmployee }) {
           autoComplete="off"
           onSubmit={handleSubmit}
         >
-          <div>
+          <div className=" flex flex-col mb-2">
             <TextField
               required
               id="outlined-required"
@@ -119,6 +120,7 @@ function Login({ setLoggedIn, setIsEmployee }) {
               color="success"
               size="large"
               type="submit"
+              sx={{ borderRadius: "20px" }}
             >
               Zaloguj
             </Button>

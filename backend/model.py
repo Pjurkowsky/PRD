@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from typing import Annotated
 
 
 class UserLoginSchema(BaseModel):
@@ -102,18 +103,18 @@ class FullApplicationSchema(BaseModel):
     city: str = Field(...)
     postal_code: str = Field(...)
     first_name: str = Field(...)
-    second_name: str = Field(...)
+    second_name: str | None = Field(None)
     last_name: str = Field(...)
     gender: str = Field(...)
-    pesel: str = Field(...)
-    date_of_birth: str = Field(...)
-    place_of_birth: str = Field(...)
-    birth_certificate: str = Field(...)
-    death_certificate: str = Field(...)
-    civil_status_certificate: str = Field(...)
-    father_name: str = Field(...)
-    mother_name: str = Field(...)
-    mother_maiden_name: str = Field(...)
+    pesel: str | None = Field(None)
+    date_of_birth: str | None = Field(None)
+    place_of_birth: str | None = Field(None)
+    birth_certificate: str | None = Field(None)
+    death_certificate: str | None = Field(None)
+    civil_status_certificate: str | None = Field(None)
+    father_name: str | None = Field(None)
+    mother_name: str | None = Field(None)
+    mother_maiden_name: str | None = Field(None)
     email_address: str = Field(...)
     phone_number: str = Field(...)
     application_type_id: int = Field(...)

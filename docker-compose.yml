@@ -14,12 +14,17 @@ services:
     build: ./frontend
     ports:
       - "5173:5173"
+    volumes:
+      - ./frontend:/app
   api:
     build: ./backend
     ports:
       - "8000:8000"
     depends_on:
       - db
+    volumes:
+      - ./backend:/app
+    restart: on-failure
 
 volumes:
   my-db:
