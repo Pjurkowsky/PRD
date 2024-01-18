@@ -67,6 +67,7 @@ function Login({ setLoggedIn, setIsEmployee }) {
     return data;
   }
   const handleSubmit = async (e) => {
+    console.log("chuj");
     e.preventDefault();
     const token = await loginUser({
       username,

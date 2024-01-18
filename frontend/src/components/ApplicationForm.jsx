@@ -63,54 +63,36 @@ function ApplicationForm({ loggedIn }) {
     return isValid;
   };
 
-  const validateString = (string) => {
+  const validateString = (input) => {
     const regex = /^[a-zA-ZęĘóÓąĄśŚłŁżŻźŹćĆńŃ]+$/;
-    validateInput(first_name.current, regex);
-    validateInput(second_name.current, regex);
-    validateInput(last_name.current, regex);
-    validateInput(father_name.current, regex);
-    validateInput(mother_name.current, regex);
-    validateInput(mother_maiden_name.current, regex);
-    validateInput(city.current, regex);
-    validateInput(street.current, regex);
-    validateInput(apartment_number.current, regex);
-    validateInput(place_of_birth.current, regex);
+    validateInput(input, regex);
   };
 
-  const validateNumber = () => {
+  const validateNumber = (input) => {
     const regex = /^[0-9]$/;
-    validateInput(pesel.current, regex);
-    validateInput(birth_certificate_number.current, regex);
-    validateInput(civil_status_certificate_number.current, regex);
+    validateInput(input, regex);
   };
 
-  const validateEmail = () => {
+  const validateEmail = (input) => {
     const regex = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/;
-    validateInput(email_address.current, regex);
+    validateInput(input, regex);
   };
 
-  const validatePostalCode = () => {
+  const validatePostalCode = (input) => {
     const regex = /^[0-9]{2}-[0-9]{3}$/;
-    validateInput(postal_code.current, regex);
+    validateInput(input, regex);
   };
 
-  const validatePhoneNumber = () => {
+  const validatePhoneNumber = (input) => {
     const regex = /^[0-9]{9}$/;
-    validateInput(phone_number.current, regex);
+    validateInput(input, regex);
   };
 
   const handleSubmit = (event) => {
-    validateString();
-    validateNumber();
-    validateEmail();
-    validatePostalCode();
-    validatePhoneNumber();
-
     event.preventDefault();
-    // post method
-    if (Object.values(errors).some((error) => error)) {
-      return;
-    }
+
+    if (Object.values(errors).some((error) => error === true)) return;
+
     fetch("http://localhost:8000/api/full_application", {
       headers: {
         "Content-Type": "application/json",
@@ -183,6 +165,7 @@ function ApplicationForm({ loggedIn }) {
               <TextField
                 select
                 label="Typ wniosku"
+                value={application_type}
                 onChange={(e) => handleApplicationType(e)}
                 sx={{ minWidth: 800 }}
               >
@@ -222,6 +205,7 @@ function ApplicationForm({ loggedIn }) {
                     id="first_name"
                     label="Imię"
                     inputRef={first_name}
+                    onBlur={() => validateString(first_name.current)}
                     helperText={
                       errors.first_name && "Imię może zawierać tylko litery"
                     }
@@ -231,6 +215,7 @@ function ApplicationForm({ loggedIn }) {
                     label="Drugie Imię"
                     error={errors.second_name}
                     inputRef={second_name}
+                    onBlur={() => validateString(second_name.current)}
                     helperText={
                       errors.second_name &&
                       "Drugie imię może zawierać tylko litery"
@@ -242,6 +227,7 @@ function ApplicationForm({ loggedIn }) {
                     label="Nazwisko"
                     inputRef={last_name}
                     error={errors.last_name}
+                    onBlur={() => validateString(last_name.current)}
                     helperText={
                       errors.last_name && "Nazwisko może zawierać tylko litery"
                     }
@@ -251,6 +237,7 @@ function ApplicationForm({ loggedIn }) {
                     label="PESEL"
                     inputRef={pesel}
                     error={errors.pesel}
+                    onBlur={() => validateNumber(pesel.current)}
                     helperText={
                       errors.pesel && "PESEL może zawierać tylko cyfry"
                     }
@@ -288,6 +275,7 @@ function ApplicationForm({ loggedIn }) {
                     label="Miejsce urodzenia"
                     inputRef={place_of_birth}
                     error={errors.place_of_birth}
+                    onBlur={() => validateString(place_of_birth.current)}
                     helperText={
                       errors.place_of_birth &&
                       "Miejsce urodzenia może zawierać tylko litery"
@@ -299,6 +287,7 @@ function ApplicationForm({ loggedIn }) {
                     label="Numer telefonu"
                     inputRef={phone_number}
                     error={errors.phone_number}
+                    onBlur={() => validatePhoneNumber(phone_number.current)}
                     helperText={
                       errors.phone_number &&
                       "Numer telefonu może zawierać tylko cyfry"
@@ -310,6 +299,7 @@ function ApplicationForm({ loggedIn }) {
                     label="Miasto"
                     inputRef={city}
                     error={errors.city}
+                    onBlur={() => validateString(city.current)}
                     helperText={
                       errors.city && "Miasto może zawierać tylko litery"
                     }
@@ -320,6 +310,7 @@ function ApplicationForm({ loggedIn }) {
                     label="Ulica"
                     inputRef={street}
                     error={errors.street}
+                    onBlur={() => validateString(street.current)}
                     helperText={
                       errors.street && "Ulica może zawierać tylko litery"
                     }
@@ -332,6 +323,7 @@ function ApplicationForm({ loggedIn }) {
                     label="Imię ojca"
                     inputRef={father_name}
                     error={errors.father_name}
+                    onBlur={() => validateString(father_name.current)}
                     helperText={
                       errors.father_name &&
                       "Imię ojca może zawierać tylko litery"
@@ -342,6 +334,7 @@ function ApplicationForm({ loggedIn }) {
                     label="Imię matki"
                     inputRef={mother_name}
                     error={errors.mother_name}
+                    onBlur={() => validateString(mother_name.current)}
                     helperText={
                       errors.mother_name &&
                       "Imię matki może zawierać tylko litery"
@@ -352,6 +345,7 @@ function ApplicationForm({ loggedIn }) {
                     label="Nazwisko panieńskie matki"
                     inputRef={mother_maiden_name}
                     error={errors.mother_maiden_name}
+                    onBlur={() => validateString(mother_maiden_name.current)}
                     helperText={
                       errors.mother_maiden_name &&
                       "Nazwisko panieńskie matki może zawierać tylko litery"
@@ -363,6 +357,9 @@ function ApplicationForm({ loggedIn }) {
                       label="Numer aktu urodzenia"
                       inputRef={birth_certificate_number}
                       error={errors.birth_certificate_number}
+                      onBlur={() =>
+                        validateNumber(birth_certificate_number.current)
+                      }
                       helperText={
                         errors.birth_certificate_number &&
                         "Numer aktu urodzenia może zawierać tylko cyfry"
@@ -373,6 +370,9 @@ function ApplicationForm({ loggedIn }) {
                       label="Numer aktu stanu cywilnego"
                       inputRef={civil_status_certificate_number}
                       error={errors.civil_status_certificate_number}
+                      onBlur={() =>
+                        validateNumber(civil_status_certificate_number.current)
+                      }
                       helperText={
                         errors.civil_status_certificate_number &&
                         "Numer aktu stanu cywilnego może zawierać tylko cyfry"
@@ -386,6 +386,7 @@ function ApplicationForm({ loggedIn }) {
                     label="Adres email"
                     inputRef={email_address}
                     error={errors.email_address}
+                    onBlur={() => validateEmail(email_address.current)}
                     helperText={
                       errors.email_address && "Niepoprawny adres email"
                     }
@@ -397,6 +398,7 @@ function ApplicationForm({ loggedIn }) {
                     placeholder="xx-xxx"
                     inputRef={postal_code}
                     error={errors.postal_code}
+                    onBlur={() => validatePostalCode(postal_code.current)}
                     helperText={
                       errors.postal_code && "Niepoprawny kod pocztowy"
                     }
@@ -407,6 +409,7 @@ function ApplicationForm({ loggedIn }) {
                     label="Numer domu"
                     inputRef={apartment_number}
                     error={errors.apartment_number}
+                    onBlur={() => validateNumber(apartment_number.current)}
                     helperText={
                       errors.apartment_number &&
                       "Numer domu może zawierać tylko cyfry"

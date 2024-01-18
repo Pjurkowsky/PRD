@@ -6,7 +6,7 @@ function CongratsPage({ login, password, email }) {
       <h2> Oczekuj na weryfikację przez pracownika urzędu gminy</h2>
       <p>
         Informacje o utworzonym koncie zostały przesłane droga elektroniczna na
-        mail: {email}
+        mail:
       </p>
     </div>
   );

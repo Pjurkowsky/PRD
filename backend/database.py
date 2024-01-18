@@ -3,7 +3,7 @@ import mysql.connector
 
 def connect():
     connection = mysql.connector.connect(
-        host='192.168.86.36',
+        host='192.168.0.122',
         user='root',
         password='test123',
         connect_timeout=10,

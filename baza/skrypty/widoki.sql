@@ -117,11 +117,13 @@ SELECT
     p.place_of_birth AS applicant_birth_place,
     p.father_name AS applicant_father_name,
     p.mother_name AS applicant_mother_name,
-    p.mother_maiden_name AS applicant_mother_maiden_name
+    p.mother_maiden_name AS applicant_mother_maiden_name,
     addr.street AS applicant_street,
     addr.apartment_number AS applicant_apartment_number,
     addr.city AS applicant_city,
-    addr.postal_code AS applicant_postal_code
+    addr.postal_code AS applicant_postal_code,
+    app.email_address AS applicant_email_address,
+    app.phone_number AS applicant_phone_number
 FROM
     Application a
 JOIN `Application Type` at ON a.application_type_id = at.id

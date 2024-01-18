@@ -39,33 +39,6 @@ function ApplicationVerification() {
   const date_of_birth = useRef();
   const place_of_birth = useRef();
 
-  const setTextFields = () => {
-    first_name.current.value = application.first_name;
-    second_name.current.value = application.second_name;
-    last_name.current.value = application.last_name;
-    pesel.current.value = application.pesel;
-
-    father_name.current.value = application.father_name;
-    mother_name.current.value = application.mother_name;
-    mother_maiden_name.current.value = application.mother_maiden_name;
-
-    birth_certificate_number.current.value =
-      application.birth_certificate_number;
-    civil_status_certificate_number.current.value =
-      application.civil_status_certificate_number;
-
-    email_address.current.value = application.email_address;
-    phone_number.current.value = application.phone_number;
-
-    city.current.value = application.city;
-    street.current.value = application.street;
-    postal_code.current.value = application.postal_code;
-    apartment_number.current.value = application.apartment_number;
-
-    date_of_birth.current.value = application.date_of_birth;
-    place_of_birth.current.value = application.place_of_birth;
-  };
-
   async function checkIfEmployee(token) {
     const response = await fetch("http://localhost:8000/api/is_employee/", {
       method: "GET",
@@ -106,24 +79,30 @@ function ApplicationVerification() {
           first_name.current.value = data.applicant_first_name;
           second_name.current.value = data.applicant_second_name;
           last_name.current.value = data.applicant_last_name;
-          pesel.current.value = data.applicant_pesel;
+          pesel.current.value = data.applicant_PESEL;
 
-          father_name.current.value = data.father_name;
-          mother_name.current.value = data.mother_name;
-          mother_maiden_name.current.value = data.mother_maiden_name;
+          father_name.current.value = data.applicant_father_name;
+          mother_name.current.value = data.applicant_mother_name;
+          mother_maiden_name.current.value = data.applicant_mother_maiden_name;
 
           birth_certificate_number.current.value =
-            data.birth_certificate_number;
+            data.applicant_birth_certificate;
           civil_status_certificate_number.current.value =
-            data.civil_status_certificate_number;
+            data.applicant_civil_status_certificate;
 
-          email_address.current.value = data.email_address;
-          phone_number.current.value = data.phone_number;
+          email_address.current.value = data.applicant_email_address;
+          phone_number.current.value = data.applicant_phone_number;
 
-          city.current.value = data.city;
-          street.current.value = data.street;
-          postal_code.current.value = data.postal_code;
-          apartment_number.current.value = data.apartment_number;
+          city.current.value = data.applicant_city;
+          street.current.value = data.applicant_street;
+          postal_code.current.value = data.applicant_postal_code;
+          apartment_number.current.value = data.applicant_apartment_number;
+
+          date_of_birth.current.value = data.applicant_birth_date;
+          place_of_birth.current.value = data.applicant_birth_place;
+
+          console.log("chuj");
+          console.log(date_of_birth.current.value);
 
           // setTextFields();
         });
@@ -132,6 +111,7 @@ function ApplicationVerification() {
 
   return (
     <div>
+      <div className="font-bold text-5xl p-10 text-center">Dane Petenta</div>
       <Box
         component="form"
         sx={{
@@ -149,88 +129,208 @@ function ApplicationVerification() {
               id="first_name"
               label="Imię"
               inputRef={first_name}
-              variant="filled"
+              disabled
+              InputLabelProps={{ shrink: true }}
             />
-            <TextField id="second_name" label="Drugie Imię" ref={second_name} />
-            <TextField id="last_name" label="Nazwisko" ref={last_name} />
-            <TextField id="pesel" label="PESEL" ref={pesel} />
+            <TextField
+              id="second_name"
+              label="Drugie Imię"
+              inputRef={second_name}
+              InputLabelProps={{ shrink: true }}
+              disabled
+            />
+            <TextField
+              id="last_name"
+              label="Nazwisko"
+              inputRef={last_name}
+              InputLabelProps={{ shrink: true }}
+              disabled
+            />
+            <TextField
+              id="pesel"
+              label="PESEL"
+              inputRef={pesel}
+              InputLabelProps={{ shrink: true }}
+              disabled
+            />
             <div className="flex ml-3 ">
               <RadioGroup
                 row
                 aria-label="gender"
                 name="row-radio-buttons-group"
-                required
               >
                 <FormControlLabel
                   value="M"
                   control={<Radio />}
                   label="Mężczyzna"
+                  disabled
                 />
                 <FormControlLabel
                   value="F"
                   control={<Radio />}
                   label="Kobieta"
+                  disabled
                 />
               </RadioGroup>
             </div>
             <TextField
               id="date_of_birth"
               label="Data urodzenia"
-              type="date"
+              disabled
+              inputRef={date_of_birth}
               InputLabelProps={{
                 shrink: true,
               }}
             />
-            <TextField id="place_of_birth" label="Miejsce urodzenia" />
-            <TextField id="phone_number" required label="Numer telefonu" />
-            <TextField id="city" required label="Miasto" />
-            <TextField id="street" required label="Ulica" />
+            <TextField
+              id="place_of_birth"
+              label="Miejsce urodzenia"
+              disabled
+              inputRef={place_of_birth}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <TextField
+              id="phone_number"
+              required
+              label="Numer telefonu"
+              inputRef={phone_number}
+              disabled
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <TextField
+              id="city"
+              required
+              label="Miasto"
+              inputRef={city}
+              disabled
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <TextField
+              id="street"
+              required
+              label="Ulica"
+              inputRef={street}
+              disabled
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
           </div>
 
           <div className="flex flex-col">
-            <TextField id="father_name" label="Imię ojca" />
-            <TextField id="mother_name" label="Imię matki" />
+            <TextField
+              id="father_name"
+              label="Imię ojca"
+              disabled
+              inputRef={father_name}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <TextField
+              id="mother_name"
+              label="Imię matki"
+              disabled
+              inputRef={mother_name}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
             <TextField
               id="mother_maiden_name"
               label="Nazwisko panieńskie matki"
+              disabled
+              inputRef={mother_maiden_name}
+              InputLabelProps={{
+                shrink: true,
+              }}
             />
             <div className="flex flex-col mt-32">
               <TextField
                 id="birth_certificate_number"
                 label="Numer aktu urodzenia"
+                disabled
+                inputRef={birth_certificate_number}
+                InputLabelProps={{
+                  shrink: true,
+                }}
               />
               <TextField
                 id="civil_status_certificate_number"
                 label="Numer aktu stanu cywilnego"
+                disabled
+                inputRef={civil_status_certificate_number}
+                InputLabelProps={{
+                  shrink: true,
+                }}
               />
             </div>
 
-            <TextField id="email_address" required label="Adres email" />
+            <TextField
+              id="email_address"
+              label="Adres email"
+              disabled
+              inputRef={email_address}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
             <TextField
               id="postal_code"
-              required
               label="Kod pocztowy"
-              placeholder="xx-xxx"
+              disabled
+              inputRef={postal_code}
+              InputLabelProps={{
+                shrink: true,
+              }}
             />
-            <TextField id="apartment_number" required label="Numer domu" />
+            <TextField
+              id="apartment_number"
+              label="Numer domu"
+              disabled
+              inputRef={apartment_number}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
           </div>
         </div>
-        <div className="flex flex-col mt-10 mb-10 w-full justify-end">
-          <div className="flex justify-end">
-            <Button
-              variant="contained"
-              color="success"
-              size="large"
-              type="submit"
-              sx={{
-                minWidth: 150,
-                padding: "10px 20px",
-                borderRadius: 10,
-              }}
-            >
-              xD
-            </Button>
-          </div>
+        <div className="font-bold text-5xl p-10 text-center">Dane Petenta</div>
+
+        <div className="flex flex-row mt-10 mb-10 w-full justify-center">
+          <Button
+            variant="contained"
+            color="success"
+            size="large"
+            type="submit"
+            sx={{
+              minWidth: 150,
+              padding: "10px 20px",
+              borderRadius: 10,
+            }}
+          >
+            Powrót
+          </Button>
+
+          <Button
+            variant="contained"
+            color="success"
+            size="large"
+            type="submit"
+            sx={{
+              minWidth: 150,
+              padding: "10px 20px",
+              borderRadius: 10,
+            }}
+          >
+            xD
+          </Button>
         </div>
       </Box>
     </div>

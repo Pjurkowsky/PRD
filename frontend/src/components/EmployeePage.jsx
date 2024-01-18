@@ -24,6 +24,9 @@ function EmployeePage() {
         .then((data) => {
           setApplications(data);
           console.log(data);
+        })
+        .catch((err) => {
+          console.log(err);
         });
     }
   }, []);
@@ -31,74 +34,78 @@ function EmployeePage() {
     <div className="w-8/12 m-auto mt-10">
       <div className="font-bold text-2xl text-center">Panel Pracownika</div>
       <div className="mt-10">
-        <Box sx={{ width: "100%" }}>
-          <DataGrid
-            rows={applications}
-            columns={[
-              { field: "id", headerName: "ID", width: 70 },
-              {
-                field: "status",
-                headerName: "Status",
-                width: 130,
-                renderCell: (params) => {
-                  return (
-                    <div className="flex justify-center">
-                      <div
-                        className={`${
-                          params.value === "approved"
-                            ? "bg-green-500"
-                            : (params.value === "rejected" && "bg-red-500") ||
-                              "bg-blue-500"
-                        } text-white rounded-full px-3 py-1 text-sm font-semibold`}
-                      >
-                        {params.value}
+        {applications.length > 0 ? (
+          <Box sx={{ width: "100%" }}>
+            <DataGrid
+              rows={applications}
+              columns={[
+                { field: "id", headerName: "ID", width: 70 },
+                {
+                  field: "status",
+                  headerName: "Status",
+                  width: 130,
+                  renderCell: (params) => {
+                    return (
+                      <div className="flex justify-center">
+                        <div
+                          className={`${
+                            params.value === "approved"
+                              ? "bg-green-500"
+                              : (params.value === "rejected" && "bg-red-500") ||
+                                "bg-blue-500"
+                          } text-white rounded-full px-3 py-1 text-sm font-semibold`}
+                        >
+                          {params.value}
+                        </div>
                       </div>
-                    </div>
-                  );
+                    );
+                  },
                 },
-              },
-              {
-                field: "date_of_submission",
-                headerName: "Data złożenia",
-                width: 200,
-              },
-              {
-                field: "date_of_verification",
-                headerName: "Data weryfikacji",
-                width: 200,
-              },
-
-              {
-                field: "application_type",
-                headerName: "Rodzaj wniosku",
-                width: 200,
-                valueGetter: (params) => `${params.value.type_name || ""}`,
-              },
-
-              {
-                headerName: "",
-                width: 200,
-                sortable: false,
-                renderCell: (params) => {
-                  return (
-                    <div className="flex justify-center">
-                      <Button variant="contained" color="primary">
-                        <Link to={`/application/${params.row.id}`}>
-                          {params.row.status === "approved"
-                            ? "Przeglądaj"
-                            : "Weryfikuj"}
-                        </Link>
-                      </Button>
-                    </div>
-                  );
+                {
+                  field: "date_of_submission",
+                  headerName: "Data złożenia",
+                  width: 200,
                 },
-              },
-            ]}
-            pageSize={10}
-            rowsPerPageOptions={[10]}
-            disableSelectionOnClick
-          />
-        </Box>
+                {
+                  field: "date_of_verification",
+                  headerName: "Data weryfikacji",
+                  width: 200,
+                },
+
+                {
+                  field: "application_type",
+                  headerName: "Rodzaj wniosku",
+                  width: 200,
+                  valueGetter: (params) => `${params.value.type_name || ""}`,
+                },
+
+                {
+                  headerName: "",
+                  width: 200,
+                  sortable: false,
+                  renderCell: (params) => {
+                    return (
+                      <div className="flex justify-center">
+                        <Button variant="contained" color="primary">
+                          <Link to={`/application/${params.row.id}`}>
+                            {params.row.status === "approved"
+                              ? "Przeglądaj"
+                              : "Weryfikuj"}
+                          </Link>
+                        </Button>
+                      </div>
+                    );
+                  },
+                },
+              ]}
+              pageSize={10}
+              rowsPerPageOptions={[10]}
+              disableSelectionOnClick
+            />
+          </Box>
+        ) : (
+          <div className="text-center">Brak wniosków do weryfikacji</div>
+        )}
       </div>
     </div>
     // <TableContainer component={Paper}>
