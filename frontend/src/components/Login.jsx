@@ -80,7 +80,7 @@ function Login({ setLoggedIn, setIsEmployee }) {
     console.log(isEmployee);
     if (isEmployee.id != null) {
       setIsEmployee(true);
-      navigate("/employee");
+      navigate("/employee_dashboard");
     } else {
       setIsEmployee(false);
       navigate("/user_dashboard");

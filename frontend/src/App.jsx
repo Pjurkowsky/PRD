@@ -10,6 +10,7 @@ import UserDashboard from "./components/UserDashboard";
 import ApplicationVerification from "./components/ApplicationVerification";
 import ApplicationForm from "./components/ApplicationForm";
 import EmployeeDashboard from "./components/EmployeeDashboard";
+import Residents from "./components/Residents";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -64,6 +65,7 @@ function App() {
           <Route path="user_dashboard/" element={<UserDashboard />} />
           <Route path="employee_dashboard/" element={<EmployeeDashboard />} />
           <Route path="application/:id" element={<ApplicationVerification />} />
+          <Route path="residents/" element={<Residents />} />
         </Route>
         <Route
           path="/"

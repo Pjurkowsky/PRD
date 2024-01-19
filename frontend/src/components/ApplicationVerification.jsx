@@ -10,10 +10,15 @@ import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import FormGroup from "@mui/material/FormGroup";
 
+import { Link } from "react-router-dom";
+
 function ApplicationVerification() {
   const params = useParams();
   const [application, setApplication] = useState({});
   const [employee, setEmployee] = useState({});
+
+  const [note, setNote] = useState("");
+
   const navigate = useNavigate();
 
   const first_name = useRef();
@@ -101,13 +106,38 @@ function ApplicationVerification() {
           date_of_birth.current.value = data.applicant_birth_date;
           place_of_birth.current.value = data.applicant_birth_place;
 
-          console.log("chuj");
-          console.log(date_of_birth.current.value);
+          setNote(data.application_note);
 
           // setTextFields();
         });
     })();
   }, []);
+
+  const handleSubmit = async (e, status) => {
+    e.preventDefault();
+    const token = JSON.parse(sessionStorage.getItem("token"))?.access_token;
+    const response = await fetch(
+      `http://localhost:8000/api/application_verification/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          credentials: "include",
+        },
+        body: JSON.stringify({
+          status: status ? "approved" : "rejected",
+          application_id: params.id,
+          note: note,
+        }),
+      }
+    );
+    const data = await response.json();
+    if (!response.ok) {
+      const errorData = data;
+      throw new Error(errorData.message || "Login failed");
+    }
+  };
 
   return (
     <div>
@@ -301,12 +331,20 @@ function ApplicationVerification() {
             />
           </div>
         </div>
-        <div className="font-bold text-5xl p-10 text-center">Dane Petenta</div>
+        <TextField
+          id="standard-multiline-flexible"
+          label="Notka"
+          multiline
+          value={note}
+          rows={6}
+          disabled={application.application_status !== "in review"}
+          variant="standard"
+          onChange={(e) => setNote(e.target.value)}
+        />
 
-        <div className="flex flex-row mt-10 mb-10 w-full justify-center">
+        <div className="flex flex-row mt-10 mb-10 w-full justify-center gap-5">
           <Button
             variant="contained"
-            color="success"
             size="large"
             type="submit"
             sx={{
@@ -315,22 +353,41 @@ function ApplicationVerification() {
               borderRadius: 10,
             }}
           >
-            Powrót
+            <Link to={"/employee"}>Powrót</Link>
           </Button>
 
-          <Button
-            variant="contained"
-            color="success"
-            size="large"
-            type="submit"
-            sx={{
-              minWidth: 150,
-              padding: "10px 20px",
-              borderRadius: 10,
-            }}
-          >
-            xD
-          </Button>
+          {application.application_status === "in review" && (
+            <>
+              <Button
+                variant="contained"
+                color="error"
+                size="large"
+                type="submit"
+                onClick={(e) => handleSubmit(e, false)}
+                sx={{
+                  padding: "10px 20px",
+                  borderRadius: 10,
+                }}
+              >
+                Odrzuć
+              </Button>
+
+              <Button
+                variant="contained"
+                color="success"
+                size="large"
+                type="submit"
+                onClick={(e) => handleSubmit(e, true)}
+                sx={{
+                  minWidth: 150,
+                  padding: "10px 20px",
+                  borderRadius: 10,
+                }}
+              >
+                Zatwierdź
+              </Button>
+            </>
+          )}
         </div>
       </Box>
     </div>

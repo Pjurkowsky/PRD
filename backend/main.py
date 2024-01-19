@@ -157,6 +157,30 @@ async def get_application_types():
     return result
 
 
+@router.get("/residents", dependencies=[Depends(JWTBearer())])
+async def get_residents():
+    query = "SELECT * FROM ResidentContactInfo"
+    cursor.execute(query)
+    result = cursor.fetchall()
+    return result
+
+
+@router.get("/applcation_types_summery", dependencies=[Depends(JWTBearer())])
+async def get_application_types_summery():
+    query = "SELECT * FROM `ApplicationTypeSummary`"
+    cursor.execute(query)
+    result = cursor.fetchall()
+    return result
+
+
+@router.get("/application_employee_info", dependencies=[Depends(JWTBearer())])
+async def get_application_employee_info():
+    query = "SELECT * FROM `EmployeeApplicationCount`"
+    cursor.execute(query)
+    result = cursor.fetchall()
+    return result
+
+
 @router.post("/address")
 async def post_address(address: AddressSchema):
     query = "INSERT INTO Address (street, apartment_number, city, postal_code) VALUES (%s, %s, %s, %s)"

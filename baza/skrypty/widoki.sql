@@ -41,7 +41,7 @@ GROUP BY at.type_name;
 
 CREATE VIEW ResidentContactInfo AS
 SELECT 
-    r.id AS ResidentID,
+    r.id AS id,
     p.first_name,
     p.last_name,
     p.PESEL,

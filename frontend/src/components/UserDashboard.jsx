@@ -40,11 +40,11 @@ function UserDashboard() {
             <DataGrid
               rows={applications}
               columns={[
-                { field: "id", headerName: "ID", width: 70 },
+                { field: "id", headerName: "ID", flex: 1 },
                 {
                   field: "status",
                   headerName: "Status",
-                  width: 130,
+                  flex: 1,
                   renderCell: (params) => {
                     return (
                       <div className="flex justify-center">
@@ -65,24 +65,24 @@ function UserDashboard() {
                 {
                   field: "date_of_submission",
                   headerName: "Data złożenia",
-                  width: 200,
+                  flex: 1,
                 },
                 {
                   field: "date_of_verification",
                   headerName: "Data weryfikacji",
-                  width: 200,
+                  flex: 1,
                 },
 
                 {
                   field: "application_type",
                   headerName: "Rodzaj wniosku",
-                  width: 200,
+                  flex: 1,
                   valueGetter: (params) => `${params.value.type_name || ""}`,
                 },
                 {
                   field: "note",
                   headerName: "Notatka",
-                  width: 500,
+                  flex: 1,
                 },
               ]}
               pageSize={10}

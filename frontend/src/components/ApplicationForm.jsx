@@ -11,6 +11,10 @@ import Typography from "@mui/material/Typography";
 function ApplicationForm({ loggedIn }) {
   const [application_types, setApplicationTypes] = useState([]);
   const [errors, setErrors] = useState({});
+
+  const [trueDataCheckbox, setTrueDataCheckbox] = useState(false);
+  const [trueDataCheckbox2, setTrueDataCheckbox2] = useState(false);
+
   useEffect(() => {
     // get application types
     fetch("http://localhost:8000/api/application_types", {
@@ -33,7 +37,7 @@ function ApplicationForm({ loggedIn }) {
   const second_name = useRef();
   const last_name = useRef();
   const pesel = useRef();
-  const gender = useRef();
+  const [gender, setGender] = useState();
 
   const father_name = useRef();
   const mother_name = useRef();
@@ -68,8 +72,13 @@ function ApplicationForm({ loggedIn }) {
     validateInput(input, regex);
   };
 
+  const validateEmptyString = (input) => {
+    const regex = /^[a-zA-ZęĘóÓąĄśŚłŁżŻźŹćĆńŃ]*$/;
+    validateInput(input, regex);
+  };
+
   const validateNumber = (input) => {
-    const regex = /^[0-9]$/;
+    const regex = /^[0-9]+$/;
     validateInput(input, regex);
   };
 
@@ -92,6 +101,8 @@ function ApplicationForm({ loggedIn }) {
     event.preventDefault();
 
     if (Object.values(errors).some((error) => error === true)) return;
+
+    if (!trueDataCheckbox || !trueDataCheckbox2) return;
 
     fetch("http://localhost:8000/api/full_application", {
       headers: {
@@ -123,6 +134,9 @@ function ApplicationForm({ loggedIn }) {
         place_of_birth: place_of_birth.current.value,
 
         application_type_id: application_type_id,
+
+        gender: gender,
+        pesel: pesel.current.value,
       }),
     })
       .then((resp) => resp.json())
@@ -215,7 +229,7 @@ function ApplicationForm({ loggedIn }) {
                     label="Drugie Imię"
                     error={errors.second_name}
                     inputRef={second_name}
-                    onBlur={() => validateString(second_name.current)}
+                    onBlur={() => validateEmptyString(second_name.current)}
                     helperText={
                       errors.second_name &&
                       "Drugie imię może zawierać tylko litery"
@@ -248,6 +262,7 @@ function ApplicationForm({ loggedIn }) {
                       aria-label="gender"
                       name="row-radio-buttons-group"
                       required
+                      onChange={(e) => setGender(e.target.value)}
                     >
                       <FormControlLabel
                         value="M"
@@ -275,7 +290,7 @@ function ApplicationForm({ loggedIn }) {
                     label="Miejsce urodzenia"
                     inputRef={place_of_birth}
                     error={errors.place_of_birth}
-                    onBlur={() => validateString(place_of_birth.current)}
+                    onBlur={() => validateEmptyString(place_of_birth.current)}
                     helperText={
                       errors.place_of_birth &&
                       "Miejsce urodzenia może zawierać tylko litery"
@@ -323,7 +338,7 @@ function ApplicationForm({ loggedIn }) {
                     label="Imię ojca"
                     inputRef={father_name}
                     error={errors.father_name}
-                    onBlur={() => validateString(father_name.current)}
+                    onBlur={() => validateEmptyString(father_name.current)}
                     helperText={
                       errors.father_name &&
                       "Imię ojca może zawierać tylko litery"
@@ -334,7 +349,7 @@ function ApplicationForm({ loggedIn }) {
                     label="Imię matki"
                     inputRef={mother_name}
                     error={errors.mother_name}
-                    onBlur={() => validateString(mother_name.current)}
+                    onBlur={() => validateEmptyString(mother_name.current)}
                     helperText={
                       errors.mother_name &&
                       "Imię matki może zawierać tylko litery"
@@ -345,7 +360,9 @@ function ApplicationForm({ loggedIn }) {
                     label="Nazwisko panieńskie matki"
                     inputRef={mother_maiden_name}
                     error={errors.mother_maiden_name}
-                    onBlur={() => validateString(mother_maiden_name.current)}
+                    onBlur={() =>
+                      validateEmptyString(mother_maiden_name.current)
+                    }
                     helperText={
                       errors.mother_maiden_name &&
                       "Nazwisko panieńskie matki może zawierać tylko litery"
@@ -423,12 +440,14 @@ function ApplicationForm({ loggedIn }) {
                     <FormControlLabel
                       required
                       control={<Checkbox />}
+                      onChange={() => setTrueDataCheckbox(!trueDataCheckbox)}
                       label="Potwierdzam, że podane  przeze mnie dane są
                         prawdziwe."
                     />
                     <FormControlLabel
                       control={<Checkbox />}
                       required
+                      onChange={() => setTrueDataCheckbox2(!trueDataCheckbox2)}
                       label="Zgadzam się na przetwarzanie danych"
                     />
                   </FormGroup>
@@ -459,17 +478,15 @@ function ApplicationForm({ loggedIn }) {
     return (
       <div className=" h-full text-center mt-10">
         <h1 className="text-5xl  font-bold">
-          {" "}
           Twój wniosek został pomyślnie złożony
         </h1>
         <h2 className="mt-10">
-          {" "}
           Oczekuj na weryfikację przez pracownika urzędu gminy
         </h2>
         {application_type === "wpis_do_rejestru" && (
           <p>
             Informacje o utworzonym koncie zostały przesłane drogą elektroniczną
-            na mail: {email_address}
+            na twój email.
           </p>
         )}
       </div>

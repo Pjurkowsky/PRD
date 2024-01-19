@@ -5,6 +5,7 @@ import { useEffect } from "react";
 function Home({ isEmployee, loggedIn }) {
   const navigate = useNavigate();
   useEffect(() => {
+    console.log(isEmployee);
     if (loggedIn) {
       if (isEmployee) {
         navigate("/employee_dashboard");
@@ -15,8 +16,11 @@ function Home({ isEmployee, loggedIn }) {
   }, [isEmployee, navigate]);
   return (
     <>
-      <div className="flex h-screen justify-center items-center">
-        <div className="flex flex-col">
+      <div className="flex flex-col h-screen justify-center ">
+        <div className="font-bold text-7xl p-10 text-center mt-10">
+          Dział Ewidencji Ludności
+        </div>
+        <div className="flex flex-col text-center   justify-center">
           <div className="font-bold text-2xl">
             Wpisz się do rejestru mieszkańców już DZIŚ!
           </div>

@@ -39,11 +39,11 @@ function EmployeePage() {
             <DataGrid
               rows={applications}
               columns={[
-                { field: "id", headerName: "ID", width: 70 },
+                { field: "id", headerName: "ID", flex: 1 },
                 {
                   field: "status",
                   headerName: "Status",
-                  width: 130,
+                  flex: 1,
                   renderCell: (params) => {
                     return (
                       <div className="flex justify-center">
@@ -64,24 +64,24 @@ function EmployeePage() {
                 {
                   field: "date_of_submission",
                   headerName: "Data złożenia",
-                  width: 200,
+                  flex: 1,
                 },
                 {
                   field: "date_of_verification",
                   headerName: "Data weryfikacji",
-                  width: 200,
+                  flex: 1,
                 },
 
                 {
                   field: "application_type",
                   headerName: "Rodzaj wniosku",
-                  width: 200,
+                  flex: 1,
                   valueGetter: (params) => `${params.value.type_name || ""}`,
                 },
 
                 {
                   headerName: "",
-                  width: 200,
+                  flex: 1,
                   sortable: false,
                   renderCell: (params) => {
                     return (
@@ -108,41 +108,6 @@ function EmployeePage() {
         )}
       </div>
     </div>
-    // <TableContainer component={Paper}>
-    //   <Table sx={{ minWidth: 650 }} aria-label="simple table">
-    //     <TableHead>
-    //       <TableRow>
-    //         <TableCell align="right">Status</TableCell>
-    //         <TableCell align="right">Data złożenia</TableCell>
-    //         <TableCell align="right">Notatka</TableCell>
-    //         <TableCell align="right">Data weryfikacji</TableCell>
-    //         <TableCell align="right">Rodzaj wniosku</TableCell>
-    //         <TableCell></TableCell>
-    //       </TableRow>
-    //     </TableHead>
-    //     <TableBody>
-    //       {applications.map((row) => (
-    //         <TableRow
-    //           key={row.name}
-    //           sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-    //         >
-    //           <TableCell align="right">{row.status}</TableCell>
-    //           <TableCell align="right">{row.date_of_submission}</TableCell>
-    //           <TableCell align="right">{row.note}</TableCell>
-    //           <TableCell align="right">{row.date_of_verification}</TableCell>
-    //           <TableCell align="right">
-    //             {row.application_type.type_name}
-    //           </TableCell>
-    //           <TableCell align="right">
-    //             <Button variant="contained" color="primary">
-    //               <Link to={`/application/${row.id}`}>Weryfikuj</Link>
-    //             </Button>
-    //           </TableCell>
-    //         </TableRow>
-    //       ))}
-    //     </TableBody>
-    //   </Table>
-    // </TableContainer>
   );
 }
 
